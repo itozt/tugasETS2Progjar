@@ -316,3 +316,56 @@ File ini merupakan client CLI (Command Line Interface) untuk berkomunikasi denga
    def remote_delete(filename):
     return send_command(f"DELETE {filename}")
    ```
+## ✨ file_client_stress_test.py
+File ini digunakan untuk melakukan stress test terhadap server file. Tujuannya adalah untuk **menguji ketahanan dan performa server** dengan melakukan upload dan download secara berulang dan bersamaan.
+1. **Impor dan Konstanta** <br>
+   - Mengimpor fungsi dari file_client_cli.py
+   - Menentukan jumlah thread (klien paralel) dan jumlah iterasi per thread
+   - Menentukan nama file yang akan di-upload/download
+   ``` py
+   import threading
+   import time
+   from file_client_cli import remote_upload, remote_get
+
+   NUM_THREADS = 10
+   NUM_ITERATIONS = 5
+   FILENAME = "testfile.txt"
+   ```
+2. **Fungsi `upload_worker()`** <br>
+   Setiap thread akan melakukan upload file sebanyak NUM_ITERATIONS kali.
+   ``` py
+   def upload_worker():
+    for _ in range(NUM_ITERATIONS):
+        remote_upload(FILENAME)
+   ```
+3. **Fungsi `download_worker()`** <br>
+   Setiap thread akan mendownload file dari server NUM_ITERATIONS kali.
+   ``` py
+   def download_worker():
+    for _ in range(NUM_ITERATIONS):
+        remote_get(FILENAME)
+   ```
+4. **Fungsi `stress_test()`** <br>
+   - Membuat dan memulai semua thread upload dan download
+   - Menjalankan semua thread secara paralel
+   - Menunggu semua thread selesai (join())
+   ``` py
+   def stress_test():
+    upload_threads = [threading.Thread(target=upload_worker) for _ in range(NUM_THREADS)]
+    download_threads = [threading.Thread(target=download_worker) for _ in range(NUM_THREADS)]
+
+    for t in upload_threads + download_threads:
+        t.start()
+    for t in upload_threads + download_threads:
+        t.join()
+   ```
+5. **Main Execution** <br>
+   - Mengukur waktu eksekusi total
+   - Menjalankan stress_test() saat file dijalankan langsung
+   ``` py
+   if __name__ == "__main__":
+    start_time = time.time()
+    stress_test()
+    end_time = time.time()
+    print(f"Stress test selesai dalam {end_time - start_time:.2f} detik")
+   ```
