@@ -167,3 +167,50 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
 ## 🌳 Diagram Arsitektur Alur Kerja
 ![Arsitektur Kerja](https://github.com/user-attachments/assets/8d32942d-038a-4868-913b-7cb23ccad587)
 
+# 🌳 Penjelasan Tiap Class File
+## ✨ file_interface.py
+1. **Inisialisasi Direktori** <br>
+   Pindah kerja ke folder files/ di mana semua operasi file berlangsung.
+   ``` py
+   class FileInterface:
+    def __init__(self):
+        os.chdir('files/')
+   ```
+2. **List File**
+   Mengembalikan daftar semua file dengan ekstensi di direktori.
+   ``` py
+   def list(self, params=[]):
+    filelist = glob('*.*')
+    return dict(status='OK', data=filelist)
+   ```
+3. **Delete File** <br>
+   Menghapus filename jika ada, atau error jika tidak ditemukan.
+   ``` py
+   def delete(self, params=[]):
+    filename = params[0]
+    if os.path.exists(filename):
+        os.remove(filename)
+        return dict(status='OK', data=f'{filename} berhasil dihapus')
+    return dict(status='ERROR', data='File not found')
+   ```
+4. **Upload File**
+   Decode Base64 dari klien, tulis ke file baru, atau laporkan jika sudah ada.
+   ``` py
+   def upload(self, params=[]):
+    filename = params[0]
+    if os.path.exists(filename):
+        return dict(status='OK', data=f'{filename} file sudah ada')
+    filedata = base64.b64decode(" ".join(params[1:]).encode())
+    with open(filename, 'wb') as f:
+        f.write(filedata)
+    return dict(status='OK', data=f'File {filename} berhasil upload')
+    ```
+5. **Download File (GET)**
+   Baca file, encode ke Base64, dan kembalikan sebagai string.
+   ``` py
+   def get(self, params=[]):
+    filename = params[0]
+    with open(filename, 'rb') as fp:
+        isifile = base64.b64encode(fp.read()).decode()
+    return dict(status='OK', data_namafile=filename, data_file=isifile)
+   ```
