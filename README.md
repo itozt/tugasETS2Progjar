@@ -150,3 +150,6 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
       - Hitung rata-rata metrik, simpan hasil ke CSV.
    3. Stop Server: hentikan proses server, bersihkan, tunggu sebentar.
 3. **Akhir Pengujian** : Cetak ringkasan jumlah konfigurasi yang berhasil/gagal.
+
+## 🌳 Diagaram Arsitektur Alur Kerja
+![Arsitektur Kerja](https://github.com/user-attachments/assets/3a65a546-a826-43d3-a2b0-08f0f6f9a0a0)
