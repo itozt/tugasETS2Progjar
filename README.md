@@ -1,4 +1,17 @@
 # Tugas ETS Pemrograman Jaringan
+## Daftar Isi
+- [Soal](https://github.com/itozt/tugasETSProgjar/tree/main#-soal)
+- [Kegunaan Masing-Masing File](https://github.com/itozt/tugasETSProgjar/tree/main#-kegunaan-masing-masing-file)
+- [Alur Kerja / Arsitektur](https://github.com/itozt/tugasETSProgjar/tree/main#-alur-kerja--arsitektur)
+- [Alur Kerja / Arsitektur (Secara Singkat)](https://github.com/itozt/tugasETSProgjar/tree/main#-alur-kerja--arsitektur-secara-singkat)
+- [Diagram Arsitektur Alur Kerja](https://github.com/itozt/tugasETSProgjar/tree/main#-diagram-arsitektur-alur-kerja)
+- Penjelasan Tiap Class File
+  - [file_interface.py]()
+  - [file_thread_pool.py]()
+  - [file_client_cli.py]()
+  - [file_client_stress_test.py]
+  - [run_for_test.py]()
+
 ## 🌳 Soal
 Dari hasil modifikasi program [https://github.com/rm77/progjar/tree/master/progjar4a](https://github.com/rm77/progjar/tree/master/progjar4a) pada TUGAS 3 <br>
 
