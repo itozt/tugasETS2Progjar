@@ -6,8 +6,8 @@
 - [Alur Kerja / Arsitektur (Secara Singkat)](https://github.com/itozt/tugasETSProgjar/tree/main#-alur-kerja--arsitektur-secara-singkat)
 - [Diagram Arsitektur Alur Kerja](https://github.com/itozt/tugasETSProgjar/tree/main#-diagram-arsitektur-alur-kerja)
 - Penjelasan Tiap Class File
-  - [file_interface.py]()
-  - [file_thread_pool.py]()
+  - [file_interface.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_interfacepy)
+  - [file_thread_pool.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_thread_poolpy)
   - [file_client_cli.py]()
   - [file_client_stress_test.py]()
   - [run_for_test.py]()
@@ -213,4 +213,54 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
     with open(filename, 'rb') as fp:
         isifile = base64.b64encode(fp.read()).decode()
     return dict(status='OK', data_namafile=filename, data_file=isifile)
+   ```
+   
+## ✨ file_thread_pool.py
+File ini bertugas menjalankan server multi-threading menggunakan ThreadPoolExecutor agar server bisa menangani banyak koneksi klien sekaligus.
+1. **Inisialisasi Konstanta dan Executor** <br>
+   Membuat socket server di port 10000 dan executor dengan 10 thread untuk menangani permintaan klien secara paralel.
+   ``` py
+   almat_server = ('0.0.0.0', 10000)
+   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+   executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
+   ```
+2. **Fungsi recv_data** <br>
+   Fungsi ini menangani satu koneksi :
+   - Menerima request dari klien
+   - Memprosesnya lewat proses_request()
+   - Mengirim hasilnya kembali ke klien
+   - Menutup koneksi
+   ``` py
+   def recv_data(conn):
+    perintah = conn.recv(1024).decode()
+    hasil = proses_request(perintah)
+    hasil = json.dumps(hasil)
+    conn.sendall(hasil.encode())
+    conn.close()
+   ```
+3. **Fungsi proses_request** <br>
+   Memproses request dengan :
+   - FileProtocol : parsing request string (misal: upload namafile ...)
+   - FileInterface: mengeksekusi perintah seperti upload, get, list, hapus
+   - Mengembalikan hasil eksekusi sebagai dict
+   ``` py
+   def proses_request(request_str):
+    fp = FileProtocol()
+    fi = FileInterface()
+    command, params = fp.proses_string(request_str)
+    hasil = fi.proses(command, params)
+    return hasil
+   ```
+4. **Main Loop Server** <br>
+   Server :
+   - Menerima koneksi dari klien
+   - Menyerahkan penanganannya ke thread pool (`executor.submit`)
+   - Proses `recv_data()` berjalan secara paralel untuk tiap klien
+   ``` py
+   if __name__ == '__main__':
+    sock.bind(almat_server)
+    sock.listen(100)
+    while True:
+        conn, client_addr = sock.accept()
+        executor.submit(recv_data, conn)
    ```
