@@ -123,3 +123,17 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
       3. Output CSV
          - Buat DataFrame lalu `to_csv("{description}_stress_test_results_<timestamp>.csv")`
          - Cetak ringkasan di console.
+5. **Stop Server**
+   - Setelah stress-test selesai, TestRunner memanggil `stop_server()` :
+     - `terminate()` lalu `wait()` pada proses server
+     - Jika perlu, `kill()`
+   - Bersihkan state, lalu tunggu 2 detik.
+6. **Iterasi Berikutnya** <br>
+   Ulangi langkah Start Server → Run Stress Test → Stop Server untuk setiap konfigurasi.
+7. **Akhir** <br>
+   Setelah semua konfigurasi diuji, TestRunner mencetak ringkasan :
+   ``` yaml
+   Konfigurasi berhasil: X/6
+   Konfigurasi yang gagal: Y/6
+   ```
+   Selesai
