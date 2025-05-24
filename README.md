@@ -1,5 +1,5 @@
 # Tugas ETS Pemrograman Jaringan
-## Soal
+## 🌳 Soal
 Dari hasil modifikasi program [https://github.com/rm77/progjar/tree/master/progjar4a](https://github.com/rm77/progjar/tree/master/progjar4a) pada TUGAS 3 <br>
 
 Rubahlah model pemrosesan concurrency yang ada, dari multithreading menjadi: 
@@ -35,3 +35,5 @@ Hasil stress test, harus direkap ke sebuah tabel yang barisnya adalah total komb
 - Throughput per client
 - Jumlah worker client yang sukses dan gagal
 - Jumlah worker server yang sukses dan gagal
+
+## 🌳 Cara Pengerjaan
