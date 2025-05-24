@@ -57,4 +57,69 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
   3. Menghentikan server, lalu pindah ke konfigurasi berikutnya
   4. Menyajikan ringkasan hasil per konfigurasi.
 
-## 🌳 Cara Pengerjaan
+## 🌳 Alur Kerja / Arsitektur
+1. **Inisialisasi TestRunner** <br>
+   `run_for_test.py` mem-parsing argumen, lalu membuat objek TestRunner.
+2. **Loop Konfigurasi Server** <br>
+   TestRunner memiliki daftar konfigurasi:
+   ``` graphql
+   [
+   (1, False, "1worker_threading"),
+   (5, False, "5workers_threading"),
+   (50, False, "50workers_threading"),
+   (1, True, "1worker_multiprocessing"),
+   (5, True, "5workers_multiprocessing"),
+   (50, True, "50workers_multiprocessing"),
+   ]
+   ```
+   Untuk tiap tuple `(server_workers, use_mp, description)`
+3. **Start Server** <br>
+   - Panggil `start_server(port=46666, workers=server_workers, use_multiprocessing=use_mp)`
+   - Internally, ini menjalankan:
+     ``` css
+     python thread_pool.py --port 46666 --workers {server_workers} [--multiprocessing]
+     ```
+   - thread_pool.py (alias file_thread_pool.py) membuat instance ThreadPoolServer:
+     - Buka socket TCP pada port 46666
+     - Buat ThreadPoolExecutor atau ProcessPoolExecutor dengan `max_workers=server_workers`
+     - Siap menerima koneksi client
+4. **Run Stress Test Client**
+   - Jika server berhasil start, TestRunner memanggil run_stress_test(server_workers=[server_workers], client_multiprocessing=False, output_prefix="{description}_")
+   - Ini menjalankan:
+     ``` css
+     python file_client_stress_test.py \
+        --server-host 172.16.16.101 \
+        --server-port 46666 \
+        --server-workers {server_workers} \
+        --output {description}_stress_test_results_<timestamp>.csv
+     ```
+   - `file_client_stress_test.py` melakukan:
+     1. Enumerasi Kombinasi
+        - operasi : upload, download
+        - volume : 10, 50, 100 MB
+        - client_workers : 1, 5, 50 <br>
+          → Total 2×3×3 = 18 test per konfigurasi server.
+     2. Untuk setiap kombinasi :
+        - Jika operasi `download`, siapkan file “test_file_{volume}MB.txt” di lokal dan upload ke server dulu.
+        - Buat `ThreadPoolExecutor` (client thread pool).
+        - Submit `client_workers` banyak tugas `worker_task`:
+          - upload :
+            - buat file dummy `size` MB
+            - kirim perintah `"UPLOAD <nama> \"<base64>\""` → server
+          - download :
+            - kirim perintah `"GET <nama>"` → server
+          - list :
+            - kirim perintah `"LIST"` → server
+          - Masing-masing worker :
+            - buka koneksi socket baru
+            - kirim perintah, tunggu response hingga `\r\n\r\n`
+            - decode JSON, simpan byte count, waktu, throughput, success/fail
+        - Setelah semua selesai, hitung :
+          - total_duration (dari client side)
+          - rata-rata duration & throughput per worker
+          - jumlah sukses/gagal client
+        - Tambah metadata jumlah server workers & asumsi server sukses semua
+        - Simpan ke list hasil
+      3. Output CSV
+         - Buat DataFrame lalu `to_csv("{description}_stress_test_results_<timestamp>.csv")`
+         - Cetak ringkasan di console.
