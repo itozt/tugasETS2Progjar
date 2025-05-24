@@ -14,22 +14,22 @@ def send_command(command_str=""):
     try:
         logging.warning(f"sending message ")
         sock.sendall(command_str.encode())
-        # Look for the response, waiting until socket is done (no more data)
+        # Cari responsnya, tunggu hingga soket selesai (tidak ada data lagi)
         data_received="" #empty string
         while True:
-            #socket does not receive all data at once, data comes in part, need to be concatenated at the end of process
+            # soket tidak menerima semua data sekaligus, data datang sebagian, perlu digabungkan di akhir proses
             data = sock.recv(16)
             if data:
-                #data is not empty, concat with previous content
+                # data tidak kosong, digabungkan dengan konten sebelumnya
                 data_received += data.decode()
                 if "\r\n\r\n" in data_received:
                     break
             else:
-                # no more data, stop the process by break
+                # tidak ada data lagi, hentikan proses dengan break
                 break
-        # at this point, data_received (string) will contain all data coming from the socket
-        # to be able to use the data_received as a dict, need to load it using json.loads()
-        # Remove end marker before parsing JSON
+        # pada titik ini, data_received (string) akan berisi semua data yang berasal dari soket
+        # tUntuk dapat menggunakan data_received sebagai dict, perlu memuatnya menggunakan json.loads()
+        # Hapus end marker sebelum mengurai JSON
         data_received = data_received.replace("\r\n\r\n", "")
         hasil = json.loads(data_received)
         logging.warning("data received from server:")
@@ -55,7 +55,7 @@ def remote_get(filename=""):
     command_str=f"GET {filename}"
     hasil = send_command(command_str)
     if (hasil['status']=='OK'):
-        #proses file dalam bentuk base64 ke bentuk bytes
+        # proses file dalam bentuk base64 ke bentuk bytes
         namafile= hasil['data_namafile']
         isifile = base64.b64decode(hasil['data_file'])
         fp = open(namafile,'wb+')
@@ -105,28 +105,28 @@ if __name__=='__main__':
     logging.basicConfig(level=logging.WARNING)
     
     try:
-        print("Testing LIST operation...")
+        print("Tes operasi LIST...")
         remote_list()
         
-        print("\nTesting UPLOAD operation...")
-        # Create a test file if it doesn't exist
+        print("\nTes operasi UPLOAD...")
+        # Buat file uji jika belum ada
         test_file = "test_upload.txt"
         if not os.path.exists(test_file):
             with open(test_file, 'w') as f:
-                f.write("This is a test file for upload operation.")
+                f.write("Ini adalah file uji untuk operasi UPLOAD.")
         remote_upload(test_file)
         
-        print("\nTesting LIST after upload...")
+        print("\nTes LIST sesudah Upload...")
         remote_list()
         
-        print("\nTesting GET operation...")
+        print("\nTes operasi GET...")
         remote_get('test_upload.txt')
         
-        print("\nTesting DELETE operation...")
+        print("\nTest operasi DELETE...")
         remote_delete('test_upload.txt')
         
-        print("\nTesting LIST after delete...")
+        print("\nTes LIST sesudah Delete...")
         remote_list()
         
     except Exception as e:
-        print(f"Error during testing: {e}")
+        print(f"Error saat testing: {e}")
