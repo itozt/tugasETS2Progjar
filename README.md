@@ -139,12 +139,14 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
    Selesai
    
 ## 🌳 Alur Kerja / Arsitektur (Secara Singkat)
-1. **Inisialisasi**  `run_for_test.py` membuat `TestRunner` dan daftar konfigurasi server (1/5/50 workers × threading/multiprocessing).
-2. **Iterasi Konfigurasi** : Untuk tiap konfigurasi :
+1. **Inisialisasi**  <br>
+   `run_for_test.py` membuat `TestRunner` dan daftar konfigurasi server (1/5/50 workers × threading/multiprocessing).
+2. **Iterasi Konfigurasi** : <br>
+   Untuk tiap konfigurasi :
    1. Start Server (`file_thread_pool.py`) di port 46666 dengan pool worker sesuai (thread/process).
    2. Jalankan Stress Test (`file_client_stress_test.py`
       - Kombinasi operasi (upload/download), ukuran file (10/50/100 MB), dan client pool (1/5/50) → 18 test.
       - Setiap worker: buat koneksi TCP, kirim perintah (UPLOAD/GET/LIST), terima JSON, ukur durasi & throughput, catat sukses/gagal.
       - Hitung rata-rata metrik, simpan hasil ke CSV.
    3. Stop Server: hentikan proses server, bersihkan, tunggu sebentar.
-3. Akhir Pengujian: Cetak ringkasan jumlah konfigurasi yang berhasil/gagal.
+3. **Akhir Pengujian** : Cetak ringkasan jumlah konfigurasi yang berhasil/gagal.
