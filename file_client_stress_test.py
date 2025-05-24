@@ -12,6 +12,7 @@ import pandas as pd
 from datetime import datetime
 import argparse
 
+
 class StressTestClient:
     def __init__(self, server_address=('172.16.16.101', 46666)):
         self.server_address = server_address
