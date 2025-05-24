@@ -193,7 +193,7 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
         return dict(status='OK', data=f'{filename} berhasil dihapus')
     return dict(status='ERROR', data='File not found')
    ```
-4. **Upload File**
+4. **Upload File** <br>
    Decode Base64 dari klien, tulis ke file baru, atau laporkan jika sudah ada.
    ``` py
    def upload(self, params=[]):
@@ -205,7 +205,7 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
         f.write(filedata)
     return dict(status='OK', data=f'File {filename} berhasil upload')
     ```
-5. **Download File (GET)**
+5. **Download File (GET)** <br>
    Baca file, encode ke Base64, dan kembalikan sebagai string.
    ``` py
    def get(self, params=[]):
