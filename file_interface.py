@@ -15,7 +15,7 @@ class FileInterface:
         except Exception as e:
             return dict(status='ERROR',data=str(e))
 
-    def hapus(self,params=[]):
+    def delete(self,params=[]):
         try:
             filename = params[0]
             if os.path.exists(filename):
