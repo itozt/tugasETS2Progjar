@@ -11,6 +11,7 @@
   - [file_client_cli.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_client_clipy)
   - [file_client_stress_test.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_client_stress_testpy)
   - [run_for_test.py]()
+- [Cara Pengerjaan](https://github.com/itozt/tugasETSProgjar/tree/main#-cara-pengerjaan)
 
 ## 🌳 Soal
 Dari hasil modifikasi program [https://github.com/rm77/progjar/tree/master/progjar4a](https://github.com/rm77/progjar/tree/master/progjar4a) pada TUGAS 3 <br>
@@ -369,3 +370,40 @@ File ini digunakan untuk melakukan stress test terhadap server file. Tujuannya a
     end_time = time.time()
     print(f"Stress test selesai dalam {end_time - start_time:.2f} detik")
    ```
+
+## ✨ run_for_test.py
+ile ini bertindak sebagai **entry point (titik awal eksekusi)** untuk menjalankan server dan menghubungkannya dengan klien untuk pengujian. File ini menyatukan berbagai komponen sistem dalam satu proses kontrol.
+1. **Import Modul dan Fungsi** <br>
+   Mengimpor :
+   - start_server() dari file_thread_pool.py → Untuk memulai server
+   - stress_test() dari file_client_stress_test.py → Untuk melakukan stress test (upload/download simultan)
+   ``` py
+   from file_thread_pool import start_server
+   from file_client_stress_test import stress_test
+   ```
+2. **Fungsi main()** <br>
+   Tahapan :
+   - Membuat dan menjalankan server di thread terpisah (daemon=True agar otomatis mati saat program selesai)
+   - Delay 2 detik untuk memastikan server siap sebelum klien mengakses
+   - Memanggil stress_test() untuk memulai pengujian beban
+   ``` py
+   def main():
+    import threading
+    import time
+
+    server_thread = threading.Thread(target=start_server, daemon=True)
+    server_thread.start()
+
+    # Tunggu beberapa detik untuk memastikan server aktif
+    time.sleep(2)
+
+    stress_test()
+    ```
+3. **Main Execution** <br>
+   Menjalankan fungsi main() saat file ini dieksekusi langsung.
+   ``` py
+   if __name__ == "__main__":
+    main()
+   ```
+
+## 🌳 Cara Pengerjaan
