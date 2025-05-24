@@ -176,7 +176,7 @@ Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut meru
     def __init__(self):
         os.chdir('files/')
    ```
-2. **List File**
+2. **List File** <br>
    Mengembalikan daftar semua file dengan ekstensi di direktori.
    ``` py
    def list(self, params=[]):
