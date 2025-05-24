@@ -264,3 +264,55 @@ File ini bertugas menjalankan server multi-threading menggunakan ThreadPoolExecu
         conn, client_addr = sock.accept()
         executor.submit(recv_data, conn)
    ```
+## ✨ file_client_cli.py
+File ini merupakan client CLI (Command Line Interface) untuk berkomunikasi dengan file server. Klien bisa mengirim perintah seperti upload, download, delete, dan list.
+1. **Fungsi `send_command`** <br>
+   Fungsi ini :
+   - Membuat koneksi ke server
+   - Mengirim perintah (string)
+   - Menerima respons JSON dari server
+   - Mengembalikan hasil sebagai dictionary
+   ``` py
+   def send_command(command_str):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((SERVER_ADDRESS, SERVER_PORT))
+    sock.sendall(command_str.encode())
+    data = sock.recv(1024)
+    sock.close()
+    return json.loads(data.decode())
+   ```
+2. **Fungsi `remote_list()`** <br>
+   Mengirim perintah LIST ke server → mendapat daftar file yang tersedia.
+   ``` py
+   def remote_list():
+    return send_command("LIST")
+   ```
+3. **Fungsi `remote_get(filename)`** <br>
+   Mengirim GET filename ke server → menerima file (base64) → menyimpannya ke disk.
+   ``` py
+   def remote_get(filename):
+    result = send_command(f"GET {filename}")
+    if result['status'] == 'OK':
+        with open(filename, 'wb') as f:
+            f.write(base64.b64decode(result['data']))
+        return True
+    return False
+   ```
+4. **Fungsi `remote_upload(filename)`** <br> 
+   Membaca file lokal → encode base64 → kirim ke server dengan perintah UPLOAD.
+   ``` py
+   def remote_upload(filename):
+    if not os.path.exists(filename):
+        return False
+    with open(filename, 'rb') as f:
+        filedata = base64.b64encode(f.read()).decode()
+    command_str = f"UPLOAD {filename} {filedata}"
+    result = send_command(command_str)
+    return result['status'] == 'OK'
+   ```
+5. **Fungsi `remote_delete(filename)`** <br>
+   Mengirim perintah DELETE filename ke server untuk menghapus file di server.
+   ``` py
+   def remote_delete(filename):
+    return send_command(f"DELETE {filename}")
+   ```
