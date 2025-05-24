@@ -40,18 +40,18 @@ Hasil stress test, harus direkap ke sebuah tabel yang barisnya adalah total komb
 Untuk menjalankan stress test, saya memerlukan beberapa file class. Berikut merupakan kegunaan dari masing-masing fiel class : 
 - <p align="justify"><b>file_protocol.py</b> : Menerjemahkan string perintah (LIST/GET/UPLOAD/DELETE) dari klien menjadi pemanggilan API di FileInterface. </p>
 - <p align="justify"><b>file_interface.py</b> : Implementasi operasi file-level di direktori `files/` yaitu operasi GET, UPLOAD, dan LIST.
-- <p align="justify"><b>file_server.py</b> : Dua mode server :</p> 
+- **file_server.py** : Dua mode server :
   - LegacyServer — model threading satu-per-klien <br>
   - PoolServer — model multithreading atau multiprocessing dengan pool worker<br>
   Menerima koneksi socket, men‐dispatch ke worker, mencatat statistik (aktif/sukses/gagal/total)</p>
 - <p align="justify"><b>file_thread_pool.py</b> : Varian server khusus “ThreadPoolServer” (mirip PoolServer), hanya pool saja (tidak ada legacy). Tambahan metode get_worker_stats() untuk monitoring di runtime.</p>
 - <p align="justify"><b>file_client_cli.py</b> : Klien interaktif CLI untuk manual testing : `remote_list(), remote_get(), remote_upload(), remote_delete()` Berkomunikasi via socket, decode/encode JSON & Base64, menampilkan hasil ke layar.</p>
-- <p align="justify"><b>file_client_stress_test.py</b> : Klien otomatisasi stress‐test: </p><br>
+- **file_client_stress_test.py** : Klien otomatisasi stress‐test: 
   - Membangkitkan file uji ukuran 10/50/100 MB
   - Menjalankan operasi upload/download/LIST secara concurrent (thread vs process pool)
   - Mengukur durasi, throughput, sukses/gagal per worker
   - Menyimpan ringkasan hasil ke CSV dan menampilkan di console.
-- <p align="justify"><b>run_for_test.py</b> : Skrip orchestration untuk: </p><br>
+- **run_for_test.py** : Skrip orchestration untuk:
   1. Memulai server (file_thread_pool.py) dengan berbagai konfigurasi worker & mode (threading/processing)
   2. Menjalankan klien stress‐test (file_client_stress_test.py) terhadap server yang sedang berjalan
   3. Menghentikan server, lalu pindah ke konfigurasi berikutnya
