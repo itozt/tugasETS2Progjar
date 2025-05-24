@@ -8,8 +8,8 @@
 - Penjelasan Tiap Class File
   - [file_interface.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_interfacepy)
   - [file_thread_pool.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_thread_poolpy)
-  - [file_client_cli.py]()
-  - [file_client_stress_test.py]()
+  - [file_client_cli.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_client_clipy)
+  - [file_client_stress_test.py](https://github.com/itozt/tugasETSProgjar/tree/main#-file_client_stress_testpy)
   - [run_for_test.py]()
 
 ## 🌳 Soal
